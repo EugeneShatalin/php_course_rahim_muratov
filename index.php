@@ -27,24 +27,26 @@
 
 					<tbody>
 					<?php
-						$users = ['John Doe'=>'john@example.com', 'Joseph Doe'=>'john@example.com', 'Jane Doe'=>'jane@example.com'];
-						$id = 1;
-						foreach ($users as $userName => $userMail) {
+						$users = [['id'   => 1,
+											 'name' => 'John Doe',
+											 'mail' => 'john@example.com'], 
+											['id'   => 2,
+											 'name' => 'Joseph Doe',
+											 'mail' => 'joseph@example.com'],
+											['id'   => 3,
+											'name' => 'Jane Doe',
+											'mail' => 'jane@example.com']];
 						
-							echo '<tr><td>'.$id.'</td>
-							<td>'.$userName.'</td>
-							<td>'.$userMail.'</td>'.
+						foreach ($users as $user ) {
+						
+							echo '<tr><td>'.$user[id].'</td>
+							<td>'.$user[name].'</td>
+							<td>'.$user[mail].'</td>'.
 							'<td>
 								<a href="edit.html" class="btn btn-warning">Edit</a>
 								<a href="#" onclick="return confirm(\'are you sure?\')" class="btn btn-danger">Delete</a>
 							</td>';
-							$id++;
+							
 						}
-					?>						
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-</body>
-</html>
+
+					?>
