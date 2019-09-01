@@ -67,6 +67,14 @@
                                 ['userImg' => 'img/no-user.jpg',
                                 'userName' => 'John Doe',
                                 'dateComm' => '12/10/2025',
+                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'],
+                                ['userImg' => 'img/no-user.jpg',
+                                'userName' => 'John Doe',
+                                'dateComm' => '12/10/2025',
+                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'],
+                                ['userImg' => 'img/no-user.jpg',
+                                'userName' => 'John Doe',
+                                'dateComm' => '12/10/2025',
                                 'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.']];
 						
 						foreach ($comments as $comment ) { ?>						
@@ -89,7 +97,7 @@
                             <div class="card-header"><h3>Оставить комментарий</h3></div>
 
                             <div class="card-body">
-                                <form action="/store" method="post">
+                                <form action="store.php" method="post">
                                     <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Имя</label>
                                     <input name="name" class="form-control" id="exampleFormControlTextarea1" />
