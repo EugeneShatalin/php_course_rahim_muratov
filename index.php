@@ -1,3 +1,21 @@
+<?php 
+    //Устанавливаем доступы к базе данных:
+    $host = 'localhost'; //имя хоста, на локальном компьютере это localhost
+    $user = 'root'; //имя пользователя, по умолчанию это root
+    $password = ''; //пароль, по умолчанию пустой
+    $db_name = 'rahim_project'; //имя базы данных
+//Соединяемся с базой данных используя наши доступы:
+    $link = mysqli_connect($host, $user, $password, $db_name);
+//Устанавливаем кодировку (не обязательно, но поможет избежать проблем):
+    mysqli_query($link, "SET NAMES 'utf8'");    
+//Формируем тестовый запрос:
+    $query = "SELECT * FROM comments WHERE id > 0";
+//Делаем запрос к БД, результат запроса пишем в $result:
+    $result = mysqli_query($link, $query) or die(mysqli_error($link));
+ //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
+    for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,35 +74,22 @@
                                 Комментарий успешно добавлен
                               </div>
                               <?php
-                        $comments = [['userImg' => 'img/no-user.jpg',
+                      /*  $comments = [['userImg' => 'img/no-user.jpg',
                                     'userName' => 'John Doe',
                                     'dateComm' => '12/10/2025',
                                     'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'], 
                                 ['userImg' => 'img/no-user.jpg',
                                 'userName' => 'John Doe',
                                 'dateComm' => '12/10/2025',
-                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'],
-                                ['userImg' => 'img/no-user.jpg',
-                                'userName' => 'John Doe',
-                                'dateComm' => '12/10/2025',
-                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'],
-                                ['userImg' => 'img/no-user.jpg',
-                                'userName' => 'John Doe',
-                                'dateComm' => '12/10/2025',
-                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'],
-                                ['userImg' => 'img/no-user.jpg',
-                                'userName' => 'John Doe',
-                                'dateComm' => '12/10/2025',
-                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.']];
+                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.']]; */
 						
 						foreach ($comments as $comment ) { ?>						
                                 <div class="media">
-                                  <img src="<?php echo $comment[userImg] ?>" class="mr-3" alt="..." width="64" height="64">
                                   <div class="media-body">
-                                    <h5 class="mt-0"><?php echo $comment[userName] ?></h5> 
-                                    <span><small><?php echo $comment[dateComm] ?></small></span>
+                                    <h5 class="mt-0"><?php echo $comment['name_user'] ?></h5> 
+                                    <span><small><?php echo $comment['date'] ?></small></span>
                                     <p>
-                                        <?php echo $comment[userComm] ?>
+                                        <?php echo $comment['comment'] ?>
                                     </p>
                                   </div> 
                                 </div> <?php } ?>

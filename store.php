@@ -16,7 +16,7 @@
         mysqli_query($link, "SET NAMES 'utf8'");
 
     //Формируем тестовый запрос для записи данных из формы в БД:
-        $query = "INSERT INTO comments (name_user, comment) VALUES ('$name', '$text')";
+        $query = "INSERT INTO comments (name_user, comment, date) VALUES ('$name', '$text', NOW())";
 
     //Делаем запрос к БД, заносим данные комментария в БД:
         mysqli_query($link, $query) or die(mysqli_error($link));
