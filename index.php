@@ -89,8 +89,11 @@
                                     <h5 class="mt-0"> 
                                         <?php echo $comment['name_user'] ?> 
                                     </h5>                                    
-                                    <span><small>
-                                        <?php echo $comment['date'] ?>
+                                    <span><small>                
+                                        <?php 
+                //Выводим дату в нужно формате
+                                        echo date('d/m/Y', strtotime($comment['date']));  
+                                        ?>
                                     </small></span>
                                     <p>
                                         <?php echo $comment['comment'] ?>
