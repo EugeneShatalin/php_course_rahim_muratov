@@ -1,7 +1,7 @@
 <?php
 //Запуск сессии
     session_start(); 
-//Устанавливаем доступы к базе данных:
+/* //Устанавливаем доступы к базе данных:
     $host = 'localhost'; //имя хоста, на локальном компьютере это localhost
     $user = 'root'; //имя пользователя, по умолчанию это root
     $password = ''; //пароль, по умолчанию пустой
@@ -15,8 +15,25 @@
 //Делаем запрос к БД, результат запроса пишем в $result:
     $result = mysqli_query($link, $query) or die(mysqli_error($link));
  //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
-    for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row);
+    for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row); */
 
+    $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
+    $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
+    $db_name = 'rahim_project'; // имя базы данных     
+    $db_user = 'root'; // имя пользователя для базы данных     
+    $db_password = ''; // пароль пользователя     
+    $charset = 'utf8'; // кодировка по умолчанию     
+    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]; // массив с дополнительными настройками подключения
+    //создание переменной хранящей параметры БД
+    $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
+    //создание обьекта PDO
+    $pdo = new PDO($dsn, $db_user, $db_password, $options);
+    //sql запрос к БД
+    $sql = "SELECT * FROM comments WHERE id > 0 ORDER BY id DESC";
+    //запрос к БД
+    $result = $pdo->query($sql);
+    //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
+    for ($comments = []; $row = $result->fetch(PDO::FETCH_ASSOC); $comments[] = $row);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,10 +131,22 @@
                                     <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Имя</label>
                                     <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                    <?php 
+                                        if ($_SESSION['nameValidation']) {
+                                            echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
+                                            unset($_SESSION['nameValidation']);
+                                        }
+                                    ?>
                                   </div>
                                   <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Сообщение</label>
                                     <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <?php 
+                                        if ($_SESSION['textValidation']) {
+                                            echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
+                                            unset($_SESSION['textValidation']);
+                                        }
+                                    ?>
                                   </div>
                                   <button type="submit" class="btn btn-success">Отправить</button>
                                 </form>
