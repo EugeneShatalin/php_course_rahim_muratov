@@ -16,6 +16,7 @@
     //Проверяем отдельно первую, если первое условие ны выполнилась и одна из переменных не пустая
     elseif (empty($_POST['name'])){
         $_SESSION['nameValidation'] = true;
+        $_SESSION['name'] = $text;
         // Отправляем пользователя на главную:
         $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
         header("Location: $redirect");
@@ -23,6 +24,7 @@
      //Проверяем отдельно вторую, если первое условие ны выполнилась и одна из переменных не пустая
     } elseif (empty($_POST['text'])) {
         $_SESSION['textValidation'] = true;
+        $_SESSION['name'] = $name; //Записываем переданные данные для передачив value, для предотвращения повторного ввода
         // Отправляем пользователя на главную:
         $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
         header("Location: $redirect");

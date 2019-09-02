@@ -102,6 +102,7 @@
                     //Вывод комментариев циклом foreach         
                     foreach ($comments as $comment ) { ?>						
                                 <div class="media">
+                                <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
                                   <div class="media-body">
                                     <h5 class="mt-0"> 
                                         <?php echo $comment['name_user'] ?> 
@@ -130,8 +131,15 @@
                                 <form action="store.php" method="post">
                                     <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Имя</label>
-                                    <input name="name" class="form-control" id="exampleFormControlTextarea1" />
+                                    <input name="name" class="form-control" id="exampleFormControlTextarea1"
                                     <?php 
+                                    //возвращаем введенные до этого данные
+                                       if (!empty($_SESSION['name'])) {
+                                           echo 'value="'.$_SESSION['name'].'"';
+                                       }  
+                                    ?> />
+                                    <?php
+                                    //Проверка заполнения данных 
                                         if ($_SESSION['nameValidation']) {
                                             echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
                                             unset($_SESSION['nameValidation']);
@@ -140,8 +148,16 @@
                                   </div>
                                   <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Сообщение</label>
-                                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3" 
                                     <?php 
+                                    //возвращаем введенные до этого данные
+                                       if (!empty($_SESSION['text'])) {
+                                           echo 'value="'.$_SESSION['text'].'"';
+                                       }  
+                                    ?>
+                                    ></textarea>
+                                    <?php
+                                    //Проверка заполнения данных
                                         if ($_SESSION['textValidation']) {
                                             echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
                                             unset($_SESSION['textValidation']);
