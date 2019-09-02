@@ -1,4 +1,5 @@
 <?php
+    session_start();
     // Берем данные комментария из $_POST, заносим в переменные.
     $name = $_POST['name'];
     $text = $_POST['text'];
@@ -21,8 +22,11 @@
     //Делаем запрос к БД, заносим данные комментария в БД:
         mysqli_query($link, $query) or die(mysqli_error($link));
     
+    //Создаем переменную в $_SESSION переменную, для вывода уведомления о добавлении комментария на главной:
+        $_SESSION ['newComment'] = true;
+    
     // Отправляем пользователя на главную:
-    $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
-    header("Location: $redirect");
-    exit();    
+        $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
+        header("Location: $redirect");
+        exit();    
 ?>

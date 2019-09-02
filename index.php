@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start(); 
     //Устанавливаем доступы к базе данных:
     $host = 'localhost'; //имя хоста, на локальном компьютере это localhost
     $user = 'root'; //имя пользователя, по умолчанию это root
@@ -70,29 +71,31 @@
                             <div class="card-header"><h3>Комментарии</h3></div>
 
                             <div class="card-body">
-                              <div class="alert alert-success" role="alert">
-                                Комментарий успешно добавлен
-                              </div>
-                              <?php
-                      /*  $comments = [['userImg' => 'img/no-user.jpg',
-                                    'userName' => 'John Doe',
-                                    'dateComm' => '12/10/2025',
-                                    'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.'], 
-                                ['userImg' => 'img/no-user.jpg',
-                                'userName' => 'John Doe',
-                                'dateComm' => '12/10/2025',
-                                'userComm' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe aspernatur, ullam doloremque deleniti, sequi obcaecati.']]; */
-						
-						foreach ($comments as $comment ) { ?>						
+                <?php
+                        if ($_SESSION['newComment']) {
+                            echo '<div class="alert alert-success" role="alert">
+                            Комментарий успешно добавлен
+                          </div>';
+                          unset($_SESSION['newComment']);
+                        }
+                              
+
+                             
+                    foreach ($comments as $comment ) { ?>						
                                 <div class="media">
                                   <div class="media-body">
-                                    <h5 class="mt-0"><?php echo $comment['name_user'] ?></h5> 
-                                    <span><small><?php echo $comment['date'] ?></small></span>
+                                    <h5 class="mt-0"> 
+                                        <?php echo $comment['name_user'] ?> 
+                                    </h5>                                    
+                                    <span><small>
+                                        <?php echo $comment['date'] ?>
+                                    </small></span>
                                     <p>
                                         <?php echo $comment['comment'] ?>
                                     </p>
                                   </div> 
-                                </div> <?php } ?>
+                                </div> 
+                <?php } ?>
                             </div>
                         </div>
                     </div>
