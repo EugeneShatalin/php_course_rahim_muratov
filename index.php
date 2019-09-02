@@ -1,6 +1,7 @@
 <?php
-session_start(); 
-    //Устанавливаем доступы к базе данных:
+//Запуск сессии
+    session_start(); 
+//Устанавливаем доступы к базе данных:
     $host = 'localhost'; //имя хоста, на локальном компьютере это localhost
     $user = 'root'; //имя пользователя, по умолчанию это root
     $password = ''; //пароль, по умолчанию пустой
@@ -9,8 +10,8 @@ session_start();
     $link = mysqli_connect($host, $user, $password, $db_name);
 //Устанавливаем кодировку (не обязательно, но поможет избежать проблем):
     mysqli_query($link, "SET NAMES 'utf8'");    
-//Формируем тестовый запрос:
-    $query = "SELECT * FROM comments WHERE id > 0";
+//Формируем тестовый запрос c сортировкой от последнего:
+    $query = "SELECT * FROM comments WHERE id > 0 ORDER BY id DESC";
 //Делаем запрос к БД, результат запроса пишем в $result:
     $result = mysqli_query($link, $query) or die(mysqli_error($link));
  //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
@@ -72,6 +73,7 @@ session_start();
 
                             <div class="card-body">
                 <?php
+                    //Проверка наличия нового комментария, и обнулунеи переменной в сессии    
                         if ($_SESSION['newComment']) {
                             echo '<div class="alert alert-success" role="alert">
                             Комментарий успешно добавлен
@@ -80,7 +82,7 @@ session_start();
                         }
                               
 
-                             
+                    //Вывод комментариев циклом foreach         
                     foreach ($comments as $comment ) { ?>						
                                 <div class="media">
                                   <div class="media-body">
