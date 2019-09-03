@@ -91,7 +91,7 @@
                                         <div class="col-md-6">
                                             <input id="email" type="email" class="form-control
                                             <?php 
-                                            if($_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse']) {
+                                            if($_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse'] || $_SESSION['trueEmailSame']) {
                                                 echo 'is-invalid'; 
                                             }
                                             ?>
@@ -113,6 +113,10 @@
                                                 echo '<span class="invalid-feedback" role="alert"><strong>Неверный формат E-mail!</strong></span>';
                                                 unset($_SESSION['emailNoValidate']);
                                                 unset($_SESSION['emailRegisterFalse']);
+                                            }
+                                            if($_SESSION['trueEmailSame']) {
+                                                echo '<span class="invalid-feedback" role="alert"><strong>Данный E-mail адрес уже зарегистрирован!</strong></span>';
+                                                unset($_SESSION['trueEmailSame']);
                                             }
                                             ?>
                                         </div>

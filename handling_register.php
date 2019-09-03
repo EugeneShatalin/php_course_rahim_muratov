@@ -18,6 +18,33 @@
     } elseif (empty($email)) {
       $_SESSION['emailRegisterFalse'] = true;
     }
+    //Подключаемся к БД для проверки E-mail ареса на повторное использование при регистрации
+  $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
+  $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
+  $db_name = 'rahim_project'; // имя базы данных     
+  $db_user = 'root'; // имя пользователя для базы данных     
+  $db_password = ''; // пароль пользователя     
+  $charset = 'utf8'; // кодировка по умолчанию     
+  $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]; // массив с дополнительными настройками подключения
+  //создание переменной хранящей параметры БД
+  $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
+  //создание обьекта PDO
+  $pdo = new PDO($dsn, $db_user, $db_password, $options);
+  //sql запрос к БД
+  $sql = "SELECT email FROM users WHERE id > 0";
+  //запрос к БД
+  $result = $pdo->query($sql);
+  //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
+  for ($emailSame = []; $row = $result->fetch(PDO::FETCH_ASSOC); $emailSame[] = $row);
+  //Перебераем полученный массив для поиска дубликата E-mail
+  foreach($emailSame as $key=>$elem ) {
+    foreach ($elem as $elemEmail) {
+      if ($elemEmail == $email) {
+        $_SESSION['trueEmailSame'] = true; 
+        break;//Если обнаружен дубликат адреса создаем переменную в сессии и выходим из цикла
+      }          
+    }    
+  }  
   //Проверка на пустоту поля формы Password
   if (empty($password)) {
     $_SESSION['passRegisterFalse'] = true;
@@ -35,8 +62,9 @@
     $_SESSION['falsPassSame'] = true;
   }
   
+
   //Проверяем была ли допущенна какая-то ошибка при заполнении формы
-    if ($_SESSION['nameRegisterFalse'] || $_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse'] || $_SESSION['passRegisterFalse'] || $_SESSION['cofPassRegisterFalse'] || $_SESSION['falsPassLength'] || $_SESSION['falsPassSame']) {
+    if ($_SESSION['nameRegisterFalse'] || $_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse'] || $_SESSION['passRegisterFalse'] || $_SESSION['cofPassRegisterFalse'] || $_SESSION['falsPassLength'] || $_SESSION['falsPassSame'] || $_SESSION['trueEmailSame']) {
       //если будеть хотя бы одна ошибка вернем пользователя на страницу с формой регистрации и там выведем ошибки
       $_SESSION['nameSave'] = $name; //сохраняем в сессии данные для вставки в value=""
       $_SESSION['emailSave'] = $email; //сохраняем в сессии данные для вставки в value=""

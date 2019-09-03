@@ -1,22 +1,7 @@
 <?php
 //Запуск сессии
-    session_start();     
-/* //Устанавливаем доступы к базе данных:
-    $host = 'localhost'; //имя хоста, на локальном компьютере это localhost
-    $user = 'root'; //имя пользователя, по умолчанию это root
-    $password = ''; //пароль, по умолчанию пустой
-    $db_name = 'rahim_project'; //имя базы данных
-//Соединяемся с базой данных используя наши доступы:
-    $link = mysqli_connect($host, $user, $password, $db_name);
-//Устанавливаем кодировку (не обязательно, но поможет избежать проблем):
-    mysqli_query($link, "SET NAMES 'utf8'");    
-//Формируем тестовый запрос c сортировкой от последнего:
-    $query = "SELECT * FROM comments WHERE id > 0 ORDER BY id DESC";
-//Делаем запрос к БД, результат запроса пишем в $result:
-    $result = mysqli_query($link, $query) or die(mysqli_error($link));
- //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
-    for ($comments = []; $row = mysqli_fetch_assoc($result); $comments[] = $row); */
-
+    session_start();
+//Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
     $db_name = 'rahim_project'; // имя базы данных     
