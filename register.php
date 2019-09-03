@@ -124,7 +124,7 @@
                                         <div class="col-md-6">
                                             <input id="password" type="password" class="form-control 
                                             <?php 
-                                            if($_SESSION['passRegisterFalse']) {
+                                            if($_SESSION['passRegisterFalse'] || $_SESSION['falsPassLength'] || $_SESSION['falsPassSame']) {
                                                 echo 'is-invalid'; 
                                             }
                                             ?>
@@ -136,6 +136,16 @@
                                                 </span>';
                                                 unset($_SESSION['passRegisterFalse']);
                                             }
+                                            if($_SESSION['falsPassLength']) {
+                                                echo '<span class="invalid-feedback" role="alert">
+                                                     <strong>В пароле дожно быть не менее 8 символов!</strong>
+                                                 </span>';                                                 
+                                             }
+                                             if($_SESSION['falsPassSame']) {
+                                                echo '<span class="invalid-feedback" role="alert">
+                                                     <strong>Значения полей не совпадают!</strong>
+                                                 </span>';                                                
+                                             }
                                             ?>
                                         </div>
                                     </div>
@@ -146,8 +156,10 @@
                                         <div class="col-md-6">
                                             <input id="password-confirm" type="password" class="form-control
                                             <?php 
-                                            if($_SESSION['cofPassRegisterFalse']) {
-                                                echo 'is-invalid'; 
+                                            if($_SESSION['cofPassRegisterFalse'] || $_SESSION['falsPassLength'] || $_SESSION['falsPassSame']) {
+                                                echo 'is-invalid';
+                                                unset($_SESSION['falsPassLength']);
+                                                unset($_SESSION['falsPassSame']); 
                                             }
                                             ?>
                                             " name="password_confirmation"  autocomplete="new-password">
