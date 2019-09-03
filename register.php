@@ -1,3 +1,6 @@
+<?php 
+    session_start();   
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,11 +61,27 @@
                                         <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
 
                                         <div class="col-md-6">
-                                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" autofocus>
-
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>Ошибка валидации</strong>
-                                                </span>
+                                            <input id="name" type="text" class="form-control @error('name') 
+                                            <?php 
+                                            if($_SESSION['nameRegisterFalse']) {
+                                                echo 'is-invalid'; 
+                                            }                                            
+                                            ?>
+                                            @enderror" name="name" 
+                                            <?php
+                                            //возвращаем введенные до этого данные
+                                            if (!empty($_SESSION['nameSave'])) {
+                                                echo 'value="'.$_SESSION['nameSave'].'"';
+                                                unset($_SESSION['nameSave']);
+                                            } ?>  >
+                                            <?php
+                                            if($_SESSION['nameRegisterFalse']) {
+                                               echo '<span class="invalid-feedback" role="alert">
+                                                    <strong>Заполните поле!</strong>
+                                                </span>';
+                                                unset($_SESSION['nameRegisterFalse']);
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 
@@ -70,7 +89,32 @@
                                         <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
 
                                         <div class="col-md-6">
-                                            <input id="email" type="email" class="form-control" name="email" >
+                                            <input id="email" type="email" class="form-control
+                                            <?php 
+                                            if($_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse']) {
+                                                echo 'is-invalid'; 
+                                            }
+                                            ?>
+                                            " name="email" <?php
+                                            //возвращаем введенные до этого данные
+                                            if (!empty($_SESSION['emailSave'])) {
+                                                echo 'value="'.$_SESSION['emailSave'].'"';
+                                                unset($_SESSION['emailSave']);
+                                            } ?> >
+                                            <?php
+                                            if($_SESSION['emailRegisterFalse']) {
+                                               echo '<span class="invalid-feedback" role="alert">
+                                                    <strong>Введите e-mail адрес!</strong>
+                                                </span>';
+                                                unset($_SESSION['emailRegisterFalse']);
+                                                unset($_SESSION['emailNoValidate']);
+                                            }
+                                            elseif ($_SESSION['emailNoValidate']) {
+                                                echo '<span class="invalid-feedback" role="alert"><strong>Неверный формат E-mail!</strong></span>';
+                                                unset($_SESSION['emailNoValidate']);
+                                                unset($_SESSION['emailRegisterFalse']);
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 
@@ -78,7 +122,21 @@
                                         <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
 
                                         <div class="col-md-6">
-                                            <input id="password" type="password" class="form-control " name="password"  autocomplete="new-password">
+                                            <input id="password" type="password" class="form-control 
+                                            <?php 
+                                            if($_SESSION['passRegisterFalse']) {
+                                                echo 'is-invalid'; 
+                                            }
+                                            ?>
+                                            " name="password"  autocomplete="new-password">
+                                            <?php
+                                            if($_SESSION['passRegisterFalse']) {
+                                               echo '<span class="invalid-feedback" role="alert">
+                                                    <strong>Заполните поле!</strong>
+                                                </span>';
+                                                unset($_SESSION['passRegisterFalse']);
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 
@@ -86,7 +144,21 @@
                                         <label for="password-confirm" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
 
                                         <div class="col-md-6">
-                                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation"  autocomplete="new-password">
+                                            <input id="password-confirm" type="password" class="form-control
+                                            <?php 
+                                            if($_SESSION['cofPassRegisterFalse']) {
+                                                echo 'is-invalid'; 
+                                            }
+                                            ?>
+                                            " name="password_confirmation"  autocomplete="new-password">
+                                            <?php
+                                            if($_SESSION['cofPassRegisterFalse']) {
+                                               echo '<span class="invalid-feedback" role="alert">
+                                                    <strong>Заполните поле!</strong>
+                                                </span>';
+                                                unset($_SESSION['cofPassRegisterFalse']);
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 

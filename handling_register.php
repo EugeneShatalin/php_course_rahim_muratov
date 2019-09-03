@@ -3,8 +3,39 @@
   // Берем данные регистрации из $_POST, заносим в переменные.
   $name = $_POST['name'];
   $email = $_POST['email'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT); //хешируем пароль
+  $password = $_POST['password'];
   $password_confirmation = $_POST['password_confirmation'];
+
+//Блок кода для валидации данных из формы:
+  //Проверка на пустоту поля формы Имя
+    if (empty($_POST['name'])) {
+      $_SESSION['nameRegisterFalse'] = true;      
+    }
+  //Проверка на пустоту и валидация поля формы E-Mail Address
+    //Отдельно проверяем валидацию и заполнение поля формы E-Mail Address, для вывода соответствующих сообщений об ошибке
+    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) == false) {
+      $_SESSION['emailNoValidate'] = true;
+    } elseif (empty($_POST['email'])) {
+      $_SESSION['emailRegisterFalse'] = true;
+    }
+  //Проверка на пустоту поля формы Password
+  if (empty($_POST['password'])) {
+    $_SESSION['passRegisterFalse'] = true;
+  }
+  //Проверка на пустоту поля формы Confirm Password
+  if (empty($_POST['password_confirmation'])) {
+    $_SESSION['cofPassRegisterFalse'] = true;
+  }
+  //Проверяем была ли допущенна какая-то ошибка при заполнении формы
+    if ($_SESSION['nameRegisterFalse'] || $_SESSION['emailNoValidate'] || $_SESSION['emailRegisterFalse'] || $_SESSION['passRegisterFalse'] || $_SESSION['cofPassRegisterFalse'] ) {
+      //если будеть хотя бы одна ошибка вернем пользователя на страницу с формой регистрации и там выведем ошибки
+      $_SESSION['nameSave'] = $_POST['name']; //сохраняем в сессии данные для вставки в value=""
+      $_SESSION['emailSave'] = $_POST['email']; //сохраняем в сессии данные для вставки в value=""
+      header("Location: register.php");
+      exit; //прерываем дальнейшее выполнение скрипта
+    }
+    
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); //хешируем пароль
 
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    

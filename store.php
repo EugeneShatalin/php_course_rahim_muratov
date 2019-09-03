@@ -16,7 +16,7 @@
     //Проверяем отдельно первую, если первое условие ны выполнилась и одна из переменных не пустая
     elseif (empty($_POST['name'])){
         $_SESSION['nameValidation'] = true;
-        $_SESSION['name'] = $text;
+        $_SESSION['text'] = $text;
         // Отправляем пользователя на главную:
         $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
         header("Location: $redirect");
