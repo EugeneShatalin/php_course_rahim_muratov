@@ -3,7 +3,7 @@
   // Берем данные регистрации из $_POST, заносим в переменные.
   $name = $_POST['name'];
   $email = $_POST['email'];
-  $password = $_POST['password'];
+  $password = password_hash($_POST['password'], PASSWORD_DEFAULT); //хешируем пароль
   $password_confirmation = $_POST['password_confirmation'];
 
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
