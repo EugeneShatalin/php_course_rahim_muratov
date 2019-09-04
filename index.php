@@ -1,6 +1,9 @@
 <?php
 //Запуск сессии
     session_start();
+    var_dump($_SESSION);
+    
+
 //Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -114,13 +117,24 @@
 
                             <div class="card-body">
                                 <form action="store.php" method="post">
-                                    <div class="form-group">
+                                    <div class="form-group" 
+                                    <?php //убираем данный элемент со страницы если авторизован пользователь
+                                    if($_SESSION['nameUser']) {
+                                        echo 'style="display: none;"';
+                                    }
+                                    ?>>
                                     <label for="exampleFormControlTextarea1">Имя</label>
                                     <input name="name" class="form-control" id="exampleFormControlTextarea1"
-                                    <?php 
+                                    <?php
+                                    //Передаем имя пользователя в строку
+                                    if($_SESSION['nameUser']) {
+                                        echo 'value="'.$_SESSION['nameUser'].'"';
+                                    }
+                                    
                                     //возвращаем введенные до этого данные
                                        if (!empty($_SESSION['name'])) {
                                            echo 'value="'.$_SESSION['name'].'"';
+                                           unset($_SESSION['name']);
                                        }  
                                     ?> />
                                     <?php
@@ -138,6 +152,7 @@
                                     //возвращаем введенные до этого данные
                                        if (!empty($_SESSION['text'])) {
                                            echo 'value="'.$_SESSION['text'].'"';
+                                           unset($_SESSION['text']);
                                        }  
                                     ?>
                                     ></textarea>
