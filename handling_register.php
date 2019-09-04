@@ -35,15 +35,13 @@
   //запрос к БД
   $result = $pdo->query($sql);
   //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
-  for ($emailSame = []; $row = $result->fetch(PDO::FETCH_ASSOC); $emailSame[] = $row);
+  for ($emailSame = []; $row = $result->fetch(PDO::FETCH_COLUMN); $emailSame[] = $row);
   //Перебераем полученный массив для поиска дубликата E-mail
-  foreach($emailSame as $key=>$elem ) {
-    foreach ($elem as $elemEmail) {
-      if ($elemEmail == $email) {
+  foreach($emailSame as $elem ) {
+    if ($elem == $email) {
         $_SESSION['trueEmailSame'] = true; 
         break;//Если обнаружен дубликат адреса создаем переменную в сессии и выходим из цикла
-      }          
-    }    
+    }          
   }  
   //Проверка на пустоту поля формы Password
   if (empty($password)) {
