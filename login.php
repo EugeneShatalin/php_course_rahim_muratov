@@ -63,7 +63,7 @@
                                         <div class="col-md-6">
                                             <input id="email" type="email" class="form-control 
                                             <?php 
-                                            if($_SESSION['loginEmailFalse']) {
+                                            if($_SESSION['loginEmailFalse'] || $_SESSION['emailNot'] || $_SESSION['emailNoValidate']) {
                                                 echo ' is-invalid'; 
                                             }
                                            ?> 
@@ -76,12 +76,25 @@
                                             ?>
                                             autocomplete="email" autofocus >
                                             <?php
+                                            if($_SESSION['emailNot']) {
+                                                echo '<span class="invalid-feedback" role="alert">
+                                                     <strong>Введите E-mail адрес!</strong>
+                                                 </span>';
+                                                 unset($_SESSION['emailNot']);
+                                             }
                                             if($_SESSION['loginEmailFalse']) {
                                                echo '<span class="invalid-feedback" role="alert">
                                                     <strong>Данный Email не зарегистрирован!</strong>
                                                 </span>';
                                                 unset($_SESSION['loginEmailFalse']);
                                             }
+                                            
+                                             if($_SESSION['emailNoValidate']) {
+                                                echo '<span class="invalid-feedback" role="alert">
+                                                     <strong>Не верный формат E-mail!</strong>
+                                                 </span>';
+                                                 unset($_SESSION['emailNoValidate']);
+                                             }
                                             ?>
                                         </div>
                                     </div>
@@ -92,12 +105,18 @@
                                         <div class="col-md-6">
                                             <input id="password" type="password" class="form-control
                                             <?php 
-                                            if($_SESSION['loginPassFalse']) {
+                                            if($_SESSION['loginPassFalse'] || $_SESSION['passNot']) {
                                                 echo ' is-invalid'; 
                                             }                                            
                                             ?> 
                                             " name="password"  autocomplete="current-password">
                                             <?php
+                                            if($_SESSION['passNot']) {
+                                                echo '<span class="invalid-feedback" role="alert">
+                                                     <strong>Введите пароль!</strong>
+                                                 </span>';
+                                                 unset($_SESSION['passNot']);
+                                             }
                                             if($_SESSION['loginPassFalse']) {
                                                echo '<span class="invalid-feedback" role="alert">
                                                     <strong>Не верный пароль!</strong>

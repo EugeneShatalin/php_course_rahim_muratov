@@ -3,6 +3,22 @@ session_start();
 //данные из $_POST заносим в переменные
 $email = $_POST['email'];
 $password = $_POST['password'];
+//Блок Валидация авторизации
+if(empty($email)) {
+  $_SESSION['emailNot'] = true;
+  header("Location: login.php");
+  exit;
+}
+if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
+  $_SESSION['emailNoValidate'] = true;
+  header("Location: login.php");
+  exit;
+}
+if (empty($password)) {
+  $_SESSION['passNot'] = true;
+  header("Location: login.php");
+  exit;
+} 
 //Подключаемся к БД для проверки регистрации E-mail и соответвия пароля
 $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
 $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
