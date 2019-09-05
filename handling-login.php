@@ -44,6 +44,14 @@ if(!empty($emailAndPass)) {
   if(password_verify($password, $pass)) {
     $_SESSION['emailUser'] = $email;
     $_SESSION['nameUser'] = $emailAndPass[0][$email]['name_user'];
+    if(isset($_POST['remember'])) { //и если существует переменная отмеченного цекбокса создаем куки
+      setcookie("emailUserСookie", "$email", time() + 3600*24*30);
+      setcookie("passUserСookie", "$pass", time() + 3600*24*30);
+    }
+    else { //если чекбокс не включен удаляем куки текущего пользователя
+      setcookie("emailUserСookie", "$email", time());
+      setcookie("passUserСookie", "$pass", time());
+    }
   }
   else {
     $_SESSION['loginPassFalse'] = true;

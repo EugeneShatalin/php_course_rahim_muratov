@@ -1,6 +1,6 @@
 <?php
 //Запуск сессии
-    session_start();
+    session_start();     
 //Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -19,6 +19,23 @@
     $result = $pdo->query($sql);
     //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
     for ($comments = []; $row = $result->fetch(PDO::FETCH_ASSOC); $comments[] = $row);
+
+    //Блок проверки авторизации
+    if (!isset($_SESSION['emailUser'])) { //проверка куки если нет сессии
+        if (isset($_COOKIE['emailUserСookie']) && isset($_COOKIE['passUserСookie'])){ //проверка данных в базе при наличии куки
+            $emailCookie = $_COOKIE['emailUserСookie']; 
+            $passCookie = $_COOKIE['passUserСookie'];
+            $sql_2 = "SELECT email, name_user, password FROM users WHERE id>0 AND email='$emailCookie' AND password='$passCookie'";
+            $result_2 = $pdo->query($sql_2);
+            //Если запрос вернул результат, запускаем ссесию    
+                if(!empty($result_2)) {
+                $_SESSION['emailUser'] = $emailCookie;
+                for ($emailAndPass = []; $row = $result_2->fetchAll(PDO::FETCH_UNIQUE); $emailAndPass[] = $row);
+                $_SESSION['nameUser'] = $emailAndPass[0][$emailCookie]['name_user'];
+            }
+        }
+
+    }    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,12 +65,24 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
-
+                    <ul class="navbar-nav rl-auto">
+                    <?php 
+                    if($_SESSION['nameUser']) {
+                        echo $_SESSION['nameUser'].'   ';
+                    }
+                    ?>
+                    <li><a href="#">Профиль   </a></li>
+                    <li><a href="#">Выход </a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto" 
+                    <?php //убираем данный элемент со страницы если авторизован пользователь
+                                    if($_SESSION['nameUser']) {
+                                        echo 'style="display: none;"';
+                                    }
+                                    ?>
+                    >
                         <!-- Authentication Links -->
                             <li class="nav-item">
                                 <a class="nav-link" href="login.php">Login</a>
