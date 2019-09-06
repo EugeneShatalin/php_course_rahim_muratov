@@ -1,6 +1,8 @@
 <?php
 //Запуск сессии
-    session_start();    
+    session_start();
+    //передаем в переменную ID пользователя для формирования запроса на получения данных из двух таблиц
+    $idUser = $_SESSION['idUser'];
 //Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -14,13 +16,15 @@
     //создание обьекта PDO
     $pdo = new PDO($dsn, $db_user, $db_password, $options);
     //sql запрос к БД
-    $sql = "SELECT * FROM comments WHERE id > 0 ORDER BY id DESC";
+    //формируем запрос к двум таблицам
+    $sql = "SELECT users.name_user, comments.comment, comments.date FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
+    
     //запрос к БД
     $result = $pdo->query($sql);
+    
     //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
     for ($comments = []; $row = $result->fetch(PDO::FETCH_ASSOC); $comments[] = $row);
-
-    //Блок проверки авторизации
+        //Блок проверки авторизации
     if (!isset($_SESSION['emailUser'])) { //проверка куки если нет сессии
         if (isset($_COOKIE['emailUserСookie']) && isset($_COOKIE['passUserСookie'])){ //проверка данных в базе при наличии куки
             $emailCookie = $_COOKIE['emailUserСookie']; 
@@ -65,10 +69,16 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav rl-auto">
+                    <ul class="navbar-nav ml-auto" <?php //убираем данный элемент со страницы если не авторизован пользователь
+                                    if(empty($idUser)) {
+                                        echo 'style="display: none;"';
+                                    }
+                                    ?>>
                     <?php 
-                    if($_SESSION['nameUser']) {
-                        echo $_SESSION['nameUser'].'   ';
+                    if($_SESSION['idUser']) {
+                        foreach ($comments as $comment ){
+                        echo $comment['name_user'];
+                        break;}
                     }
                     ?>
                     <li><a href="#">Профиль   </a></li>
@@ -78,7 +88,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto" 
                     <?php //убираем данный элемент со страницы если авторизован пользователь
-                                    if($_SESSION['nameUser']) {
+                                    if($_SESSION['idUser']) {
                                         echo 'style="display: none;"';
                                     }
                                     ?>
@@ -119,7 +129,7 @@
                                 <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
                                   <div class="media-body">
                                     <h5 class="mt-0"> 
-                                        <?php echo $comment['name_user'] ?> 
+                                        <?php echo $comment['name_user']; ?>
                                     </h5>                                    
                                     <span><small>                
                                         <?php 
@@ -137,55 +147,39 @@
                         </div>
                     </div>
                 
-                    <div class="col-md-12" style="margin-top: 20px;">
-                        <div class="card">
-                            <div class="card-header"><h3>Оставить комментарий</h3></div>
+                    <div class="col-md-12" style="margin-top: 20px; <?php
+                                                                        if(empty($idUser)) {
+                                                                            echo 'display: none;';
+                                                                        }
+                                                                    ?> ">
+                        <div class="card" display = "none">
+                            <div class="card-header" display = "none"><h3>Оставить комментарий</h3></div>
 
                             <div class="card-body">
                                 <form action="store.php" method="post">
                                     <div class="form-group" 
                                     <?php //убираем данный элемент со страницы если авторизован пользователь
-                                    if($_SESSION['nameUser']) {
+                                    if($_SESSION['idUser']) {
                                         echo 'style="display: none;"';
                                     }
                                     ?>>
                                     <label for="exampleFormControlTextarea1">Имя</label>
-                                    <input name="name" class="form-control" id="exampleFormControlTextarea1"
+                                    <input name="idUser" class="form-control" id="exampleFormControlTextarea1"
                                     <?php
-                                    //Передаем имя пользователя в строку
-                                    if($_SESSION['nameUser']) {
-                                        echo 'value="'.$_SESSION['nameUser'].'"';
-                                    }
-                                    
-                                    //возвращаем введенные до этого данные
-                                       if (!empty($_SESSION['name'])) {
-                                           echo 'value="'.$_SESSION['name'].'"';
-                                           unset($_SESSION['name']);
-                                       }  
+                                    //Передаем id пользователя в строку
+                                    if($_SESSION['idUser']) {
+                                        echo 'value="'.$_SESSION['idUser'].'"';
+                                    }                                    
                                     ?> />
-                                    <?php
-                                    //Проверка заполнения данных 
-                                        if ($_SESSION['nameValidation']) {
-                                            echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
-                                            unset($_SESSION['nameValidation']);
-                                        }
-                                    ?>
+                                   
                                   </div>
                                   <div class="form-group">
                                     <label for="exampleFormControlTextarea1">Сообщение</label>
-                                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3" 
-                                    <?php 
-                                    //возвращаем введенные до этого данные
-                                       if (!empty($_SESSION['text'])) {
-                                           echo 'value="'.$_SESSION['text'].'"';
-                                           unset($_SESSION['text']);
-                                       }  
-                                    ?>
-                                    ></textarea>
+                                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                                     <?php
                                     //Проверка заполнения данных
                                         if ($_SESSION['textValidation']) {
-                                            echo '<p style="color: red; font-size: 14px;">Введите данные!</p>';
+                                            echo '<p style="color: red; font-size: 14px;">Введите комментарий!</p>';
                                             unset($_SESSION['textValidation']);
                                         }
                                     ?>

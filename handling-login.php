@@ -32,21 +32,23 @@ $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
 //создание обьекта PDO
 $pdo = new PDO($dsn, $db_user, $db_password, $options);
 //sql запрос к БД
-$sql = "SELECT email, name_user, password FROM users WHERE id>0 AND email='$email'";
+$sql = "SELECT email, id, password FROM users WHERE id>0 AND email='$email'";
 //запрос к БД
 $result = $pdo->query($sql);
 //Преобразуем то, что отдала нам база в нормальный массив PHP $emailAndPass:
 for ($emailAndPass = []; $row = $result->fetchAll(PDO::FETCH_UNIQUE); $emailAndPass[] = $row);
+
 //Перебераем полученный массиив с проверкой email и password
 if(!empty($emailAndPass)) {
   $pass = $emailAndPass[0][$email]['password'];
  
   if(password_verify($password, $pass)) {
     $_SESSION['emailUser'] = $email;
-    $_SESSION['nameUser'] = $emailAndPass[0][$email]['name_user'];
+    $_SESSION['idUser'] = $emailAndPass[0][$email]['id'];
     if(isset($_POST['remember'])) { //и если существует переменная отмеченного цекбокса создаем куки
       setcookie("emailUserСookie", "$email", time() + 3600*24*30);
       setcookie("passUserСookie", "$pass", time() + 3600*24*30);
+      
     }
     else { //если чекбокс не включен удаляем куки текущего пользователя
       setcookie("emailUserСookie", "$email", time());

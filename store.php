@@ -1,32 +1,13 @@
 <?php
     session_start();
     // Берем данные комментария из $_POST, заносим в переменные.
-    $name = $_POST['name'];
+    $idUser = $_POST['idUser'];
     $text = $_POST['text'];
     //Проверяе переменные из $_POST, сущестуютли:
-    //Сперва проверяем обе
-    if(empty($_POST['name']) && empty($_POST['text'])) {
-        $_SESSION['nameValidation'] = true;
+    //Проверяем заполнен комментарий или нет
+    if (empty($_POST['text'])) {
         $_SESSION['textValidation'] = true;
         // Отправляем пользователя на главную:
-        $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
-        header("Location: $redirect");
-        exit();
-    }
-    //Проверяем отдельно первую, если первое условие ны выполнилась и одна из переменных не пустая
-    elseif (empty($_POST['name'])){
-        $_SESSION['nameValidation'] = true;
-        $_SESSION['text'] = $text;
-        // Отправляем пользователя на главную:
-        $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
-        header("Location: $redirect");
-        exit();
-     //Проверяем отдельно вторую, если первое условие ны выполнилась и одна из переменных не пустая
-    } elseif (empty($_POST['text'])) {
-        $_SESSION['textValidation'] = true;
-        $_SESSION['name'] = $name; //Записываем переданные данные для передачив value, для предотвращения повторного ввода
-        // Отправляем пользователя на главную:
-        $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
         header("Location: $redirect");
         exit();
     }
@@ -44,7 +25,7 @@
     //создание обьекта PDO
     $pdo = new PDO($dsn, $db_user, $db_password, $options);
     //sql запрос к БД
-    $sql = "INSERT INTO comments (name_user, comment, date) VALUES ('$name', '$text', NOW())";
+    $sql = "INSERT INTO comments (id_user, comment, date) VALUES ('$idUser', '$text', NOW())";
     //Отправка запроса в БД
     $pdo->exec($sql);
 
