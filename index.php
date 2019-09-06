@@ -1,6 +1,8 @@
 <?php
 //Запуск сессии
-    session_start();     
+    session_start();
+    var_dump($_SESSION);
+    var_dump($_COOKIE);
 //Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -72,7 +74,7 @@
                     }
                     ?>
                     <li><a href="#">Профиль   </a></li>
-                    <li><a href="#">Выход </a></li>
+                    <li><a href="end.php">Выход </a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
