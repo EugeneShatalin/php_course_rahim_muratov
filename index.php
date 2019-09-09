@@ -17,13 +17,14 @@
     $pdo = new PDO($dsn, $db_user, $db_password, $options);
     //sql запрос к БД
     //формируем запрос к двум таблицам
-    $sql = "SELECT users.name_user, comments.comment, comments.date FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
+    $sql = "SELECT users.name_user, users.id, comments.comment, comments.date FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
     
     //запрос к БД
     $result = $pdo->query($sql);
     
     //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
     for ($comments = []; $row = $result->fetch(PDO::FETCH_ASSOC); $comments[] = $row);
+    
         //Блок проверки авторизации
     if (!isset($_SESSION['emailUser'])) { //проверка куки если нет сессии
         if (isset($_COOKIE['emailUserСookie']) && isset($_COOKIE['passUserСookie'])){ //проверка данных в базе при наличии куки
@@ -81,7 +82,7 @@
                         break;}
                     }
                     ?>
-                    <li><a href="#">Профиль   </a></li>
+                    <li><a href="profile.php">Профиль   </a></li>
                     <li><a href="end.php">Выход </a></li>
                     </ul>
 
@@ -124,12 +125,30 @@
                               
 
                     //Вывод комментариев циклом foreach         
-                    foreach ($comments as $comment ) { ?>						
+                    foreach ($comments as $comment ) {
+                        // Проверяем что комментарий существует для данного пользователя, так как данные берем из двух таблиц, чтоб не вывести пустой комментарий
+                        if(!empty($comment['comment'])){?>						
                                 <div class="media">
-                                <img src="img/no-user.jpg" class="mr-3" alt="..." width="64" height="64">
+                                <img src="
+                                <?php // выводим картинку
+                                    $id = $comment['id'];
+                                    $sql_3 = "SELECT image FROM users WHERE id=$id";
+                                    $result = $pdo->query($sql_3);
+                                    for ($img = []; $row = $result->fetch(PDO::FETCH_COLUMN); $img[] = $row);
+                                   if(!empty($img)) { // если картинка существует выведим ее
+                                       echo 'img/'.$img[0];
+                                   }
+                                   else {
+                                    echo 'img/no-user.jpg'; // если не существует, выведим заглушку
+                                   }
+                                    
+                                ?>
+                                "                          
+                                class="mr-3" alt="..." width="64" height="64">
                                   <div class="media-body">
                                     <h5 class="mt-0"> 
-                                        <?php echo $comment['name_user']; ?>
+                                        <?php 
+                                        echo $comment['name_user']; ?>
                                     </h5>                                    
                                     <span><small>                
                                         <?php 
@@ -142,7 +161,7 @@
                                     </p>
                                   </div> 
                                 </div> 
-                <?php } ?>
+                <?php } }?>
                             </div>
                         </div>
                     </div>

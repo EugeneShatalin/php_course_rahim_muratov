@@ -43,11 +43,12 @@ if(!empty($emailAndPass)) {
   $pass = $emailAndPass[0][$email]['password'];
  
   if(password_verify($password, $pass)) {
-    $_SESSION['emailUser'] = $email;
-    $_SESSION['idUser'] = $emailAndPass[0][$email]['id'];
+    $_SESSION['emailUser'] = $email; // сохраняем email в сессию
+    $_SESSION['idUser'] = $emailAndPass[0][$email]['id']; // сохраняем id в сессию
+    $_SESSION['imageUser'] =  $emailAndPass[0][$email]['image']; // сохраняем картинку профеля в сессию
     if(isset($_POST['remember'])) { //и если существует переменная отмеченного цекбокса создаем куки
-      setcookie("emailUserСookie", "$email", time() + 3600*24*30);
-      setcookie("passUserСookie", "$pass", time() + 3600*24*30);
+      setcookie("emailUserСookie", "$email", time() + 900);
+      setcookie("passUserСookie", "$pass", time() + 900);
       
     }
     else { //если чекбокс не включен удаляем куки текущего пользователя
