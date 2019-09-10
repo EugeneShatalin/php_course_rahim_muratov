@@ -1,9 +1,8 @@
 <?php
     session_start();
-    
     $idUser = $_SESSION['idUser'];
     $emailUser = $_SESSION['emailUser'];    
-
+    
     //Подключение к БД        
     $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
     $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -17,16 +16,18 @@
     //создание обьекта PDO
     $pdo = new PDO($dsn, $db_user, $db_password, $options);
     //sql запрос к БД
-    $sql = "SELECT name_user, password FROM users WHERE id = $idUser";
+    $sql = "SELECT name_user, password, image FROM users WHERE id = $idUser";
     //запрос к БД
     $result = $pdo->query($sql);
     
     //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
     for ($userDate = []; $row = $result->fetch(PDO::FETCH_ASSOC); $userDate[] = $row);
     // Передаем в переменные не дастающие данные пользователя
+    
     foreach ($userDate as $user) {
             $nameUser = $user['name_user'];
-            $passwordUser = $user['password']; 
+            $passwordUser = $user['password'];
+            $imageUser = $user['image']; 
     }
     
 ?>
@@ -64,10 +65,10 @@
                                     }
                                     ?>>
                     <?php 
-                    if($_SESSION['idUser']) {
-                       
+                    if($_SESSION['nameUser']) {
+                        echo $_SESSION['nameUser'];
                     }
-                    ?>
+                    ?> 
                     <li><a href="profile.php">Профиль   </a></li>
                     <li><a href="end.php">Выход </a></li>
                     </ul>
@@ -100,10 +101,12 @@
                         <div class="card-header"><h3>Профиль пользователя</h3></div>
 
                         <div class="card-body">
-                          <div class="alert alert-success" role="alert">
-                            Профиль успешно обновлен
-                          </div>
-
+                        <?php
+                            if(!empty( $_SESSION['updatePassword'])) {
+                             echo '<div class="alert alert-success" role="alert">Профиль успешно обновлен</div>';
+                             unset( $_SESSION['updatePassword']);                             
+                            }
+                        ?>
                             <form action="handling_profile.php" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-8">
@@ -143,18 +146,13 @@
                                     <div class="col-md-4">
                                         <img src="
                                         <?php // выводим картинку
-                                    if(!empty($_SESSION['imageUser'])) {
-                                        echo "img/".$_SESSION['imageUser'];
-                                    }
-                                    else {
-                                        echo "img/no-user.jpg";
-                                    }
+                                           echo "img/".$imageUser;
                                         ?>
                                         " alt="" class="img-fluid">
                                     </div>
 
                                     <div class="col-md-12">
-                                        <button class="btn btn-warning">Edit profile</button>
+                                        <button class="btn btn-warning" name="updateProfile">Edit profile</button>
                                     </div>
                                 </div>
                             </form>
@@ -167,29 +165,45 @@
                         <div class="card-header"><h3>Безопасность</h3></div>
 
                         <div class="card-body">
-                            <div class="alert alert-success" role="alert">
-                                Пароль успешно обновлен
-                            </div>
-
-                            <form action="/profile/password" method="post">
+                            <?php
+                            if(!empty( $_SESSION['update'])) {
+                             echo '<div class="alert alert-success" role="alert">Пароль успешно обновлен</div>';
+                             unset( $_SESSION['update']);                             
+                            }
+                            ?>
+                            <form action="handling_profile.php" method="post">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Current password</label>
                                             <input type="password" name="current" class="form-control" id="exampleFormControlInput1">
                                         </div>
-
+                                        <?php
+                                        if($_SESSION['passwordFalse']) {
+                                                    echo '<span class="text text-danger">Не верный пароль!</span>';
+                                                    unset($_SESSION['passwordFalse']);
+                                                }
+                                        ?>
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">New password</label>
                                             <input type="password" name="password" class="form-control" id="exampleFormControlInput1">
                                         </div>
-
+                                        <?php
+                                        if($_SESSION['passwordLengthFals']) {
+                                                    echo '<span class="text text-danger">Должно быть не менее 8 символов!</span>';
+                                                    unset($_SESSION['passwordLengthFals']);
+                                                }
+                                        if($_SESSION['passwordConfirmationFalse']) {
+                                            echo '<span class="text text-danger">Пароли не совпадают!</span>';
+                                            unset($_SESSION['passwordConfirmationFalse']);
+                                        }
+                                        ?>
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Password confirmation</label>
                                             <input type="password" name="password_confirmation" class="form-control" id="exampleFormControlInput1">
                                         </div>
 
-                                        <button class="btn btn-success">Submit</button>
+                                        <button class="btn btn-success" name="updatePassword">Submit</button>
                                     </div>
                                 </div>
                             </form>

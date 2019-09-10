@@ -76,10 +76,8 @@
                                     }
                                     ?>>
                     <?php 
-                    if($_SESSION['idUser']) {
-                        foreach ($comments as $comment ){
-                        echo $comment['name_user'];
-                        break;}
+                    if($_SESSION['nameUser']) {
+                        echo $_SESSION['nameUser'];
                     }
                     ?>
                     <li><a href="profile.php">Профиль   </a></li>

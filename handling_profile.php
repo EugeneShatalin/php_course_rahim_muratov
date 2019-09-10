@@ -6,7 +6,6 @@
  $namePost = $_POST['name'];
  $emailPost = $_POST['email'];
  
-
  //Подключаемся к БД
 $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
 $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
@@ -28,12 +27,16 @@ $userArray = $result[0];
 $userName = $userArray['name_user'];
 $userEmail = $userArray['email'];
 $userImageName = $userArray['image'];
+$userPassword = $userArray['password'];
+
+// Блок обработки данных из формы по изминению профайла
+if(isset($_POST['updateProfile'])) {
 //Если имя переданное из формы отличается от имени в БД, перезаписываем его
 if($userName !== $namePost) {
   $sql_2 = "UPDATE users SET name_user = '$namePost' WHERE id = $idUser";
   $pdo->exec($sql_2);
+  $update = true; // переменная для фиксации изминений(для вывода сообщения о успешно изминении)
 }
-
 //Проверка email на валидацию и дублирование
  if($userEmail !== $emailPost) { //Проверяем отличается ли введеный email от email в БД
 
@@ -43,6 +46,7 @@ if($userName !== $namePost) {
       if(empty($result_2)) { //Проверяем email на дубликат в БД
         $sql_4 = "UPDATE users SET email = '$emailPost' WHERE id = $idUser";
         $pdo->exec($sql_4); //Презаписываем email в БД
+        $update = true; // переменная для фиксации изминений(для вывода сообщения о успешно изминении)
       }
       else {
         $_SESSION['duplicateEmail'] = true; //Создаем переменную для ошибки дубля email
@@ -64,14 +68,48 @@ if(!empty($imageName)) {
 
   $sql_5 = "UPDATE users SET image = '$imageNewName' WHERE id = $idUser"; //создаем sql запрос для заменны имени картинки профиля в БД
   $pdo->exec($sql_5); // Отправляе запрос в БД
-  $_SESSION['imageUser'] = $imageNewName; // перезаписывем в ссесию новую картинку
+  $update = true; // переменная для фиксации изминений(для вывода сообщения о успешно изминении)
+  
   
   if(!empty($userImageName)) { // Если существовала до этого картинка профиля, удаляем ее
       unlink("img/$userImageName");
   }
   
 }
-
+if($update) {
+  $_SESSION['update'] = true; // переменная в сессия для вывода сообщения об успешном изминении профиля
+}
 
 header("Location: profile.php");
+}
+
+// Блок обработки данных из формы по изминению пароля
+if(isset($_POST['updatePassword'])) {
+  $current = $_POST['current'];
+  $password = $_POST['password'];
+  $password_confirmation = $_POST['password_confirmation'];
+  // проверяем совпадает ли введеный пароль с текущим в БД
+  if(password_verify($current, $userPassword)) {
+    // Проверямм длину нового пароля, не менее 8 символов
+    if(strlen($password) > 8) {
+      // Проверяем совпадение обоих введеных паролей
+      if($password === $password_confirmation) {
+        $sql_6 = "UPDATE users SET password = '$password' WHERE id = $idUser";
+        $pdo->exec($sql_6); // Отправляе запрос в БД
+        $updatePassword = true; // переменная для фиксации изминений(для вывода сообщения о успешно изминении)
+      }
+      else{
+        $_SESSION['passwordConfirmationFalse'] = true;
+      }
+    }
+    else {
+      $_SESSION['passwordLengthFals'] = true;
+    }
+  }
+  else {
+    $_SESSION ['passwordFalse'] = true;
+  }
+
+header("Location: profile.php");
+}
 ?>

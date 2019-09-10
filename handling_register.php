@@ -56,7 +56,7 @@
     $_SESSION['cofPassRegisterFalse'] = true;
   }
   //Проверям идентичность введеного пароля в обоих полях
-  if((!empty($password) && !empty($password_confirmation) && strlen($password) >= 8) && ($password !== $password_confirmation))  {
+  if((!empty($password) && !empty($password_confirmation) && strlen($password) >= 8) && ($password === $password_confirmation))  {
     $_SESSION['falsPassSame'] = true;
   }
   

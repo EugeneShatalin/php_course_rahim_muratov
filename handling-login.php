@@ -32,11 +32,13 @@ $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
 //создание обьекта PDO
 $pdo = new PDO($dsn, $db_user, $db_password, $options);
 //sql запрос к БД
-$sql = "SELECT email, id, password FROM users WHERE id>0 AND email='$email'";
+$sql = "SELECT email, id, name_user, password FROM users WHERE id>0 AND email='$email'";
 //запрос к БД
 $result = $pdo->query($sql);
 //Преобразуем то, что отдала нам база в нормальный массив PHP $emailAndPass:
 for ($emailAndPass = []; $row = $result->fetchAll(PDO::FETCH_UNIQUE); $emailAndPass[] = $row);
+
+// Блок обработки формы изминения профиля
 
 //Перебераем полученный массиив с проверкой email и password
 if(!empty($emailAndPass)) {
@@ -45,7 +47,7 @@ if(!empty($emailAndPass)) {
   if(password_verify($password, $pass)) {
     $_SESSION['emailUser'] = $email; // сохраняем email в сессию
     $_SESSION['idUser'] = $emailAndPass[0][$email]['id']; // сохраняем id в сессию
-    $_SESSION['imageUser'] =  $emailAndPass[0][$email]['image']; // сохраняем картинку профеля в сессию
+    $_SESSION['nameUser'] =  $emailAndPass[0][$email]['name_user']; // сохраняем картинку профеля в сессию
     if(isset($_POST['remember'])) { //и если существует переменная отмеченного цекбокса создаем куки
       setcookie("emailUserСookie", "$email", time() + 900);
       setcookie("passUserСookie", "$pass", time() + 900);
