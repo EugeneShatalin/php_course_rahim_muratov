@@ -17,7 +17,7 @@
     $pdo = new PDO($dsn, $db_user, $db_password, $options);
     //sql запрос к БД
     //формируем запрос к двум таблицам
-    $sql = "SELECT users.name_user, users.id, comments.comment, comments.date FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
+    $sql = "SELECT users.name_user, users.id, comments.comment, comments.date, comments.do_not_show_comment FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
     
     //запрос к БД
     $result = $pdo->query($sql);
@@ -113,7 +113,7 @@
 
                             <div class="card-body">
                 <?php
-                    //Проверка наличия нового комментария, и обнулунеи переменной в сессии    
+                    //Проверка наличия нового комментария, при обнулунеи переменной в сессии    
                         if ($_SESSION['newComment']) {
                             echo '<div class="alert alert-success" role="alert">
                             Комментарий успешно добавлен
@@ -125,7 +125,7 @@
                     //Вывод комментариев циклом foreach         
                     foreach ($comments as $comment ) {
                         // Проверяем что комментарий существует для данного пользователя, так как данные берем из двух таблиц, чтоб не вывести пустой комментарий
-                        if(!empty($comment['comment'])){?>						
+                        if(!empty($comment['comment']) && $comment['do_not_show_comment'] == false) {?>						
                                 <div class="media">
                                 <img src="
                                 <?php // выводим картинку
