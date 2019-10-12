@@ -1,35 +1,9 @@
 <?php
     session_start();
-    $idUser = $_SESSION['idUser'];
-    $emailUser = $_SESSION['emailUser'];    
+    $db = include  __DIR__ . '/../models/start.php';
     
-    //Подключение к БД        
-    $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
-    $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
-    $db_name = 'rahim_project'; // имя базы данных     
-    $db_user = 'root'; // имя пользователя для базы данных     
-    $db_password = ''; // пароль пользователя     
-    $charset = 'utf8'; // кодировка по умолчанию     
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]; // массив с дополнительными настройками подключения
-    //создание переменной хранящей параметры БД
-    $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
-    //создание обьекта PDO
-    $pdo = new PDO($dsn, $db_user, $db_password, $options);
-    //sql запрос к БД
-    $sql = "SELECT name_user, password, image FROM users WHERE id = $idUser";
-    //запрос к БД
-    $result = $pdo->query($sql);
-    
-    //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
-    for ($userDate = []; $row = $result->fetch(PDO::FETCH_ASSOC); $userDate[] = $row);
-    // Передаем в переменные не дастающие данные пользователя
-    
-    foreach ($userDate as $user) {
-            $nameUser = $user['name_user'];
-            $passwordUser = $user['password'];
-            $imageUser = $user['image']; 
-    }
-    
+    $result = $db->getRequestWithCondition('name_user, image', 'users', 'id = '."'".$_SESSION['idUser']."'");   
+    $userDate = $result[0];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,13 +18,13 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="index.php">
+                <a class="navbar-brand" href="/">
                     Project
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,9 +42,10 @@
                     if($_SESSION['nameUser']) {
                         echo $_SESSION['nameUser'];
                     }
-                    ?> 
-                    <li><a href="profile.php">Профиль   </a></li>
-                    <li><a href="end.php">Выход </a></li>
+                    ?>
+                    <li><a href="/profile">Профиль   </a></li>
+                    <li><a href="/mvc/controlers/end.php">Выход </a></li>
+                    <li><a href="/admin">Админка </a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -83,10 +58,10 @@
                     >
                         <!-- Authentication Links -->
                             <li class="nav-item">
-                                <a class="nav-link" href="login.php">Login</a>
+                                <a class="nav-link" href="/login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="register.php">Register</a>
+                                <a class="nav-link" href="/register">Register</a>
                             </li>
                     </ul>
                 </div>
@@ -107,13 +82,13 @@
                              unset( $_SESSION['updatePassword']);                             
                             }
                         ?>
-                            <form action="handling_profile.php" method="post" enctype="multipart/form-data">
+                            <form action="../controlers/handling_profile.php" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="exampleFormControlInput1">Name</label>
                                             <input type="text" class="form-control" name="name" id="exampleFormControlInput1" value="<?php
-                                                    echo $nameUser;
+                                                    echo $userDate['name_user'];
                                                 ?>">
                                            
                                         </div>
@@ -124,7 +99,7 @@
                                             <?php
                                                 if($_SESSION['duplicateEmail'] || $_SESSION['emailFormatFalse'])    echo ' is-invalid';                                           
                                             ?>" name="email" id="exampleFormControlInput1" value="<?php
-                                                    echo $emailUser;
+                                                    echo $_SESSION['emailUser'];
                                                 ?>">
                                             <?php
                                                 if($_SESSION['emailFormatFalse']) {
@@ -146,7 +121,7 @@
                                     <div class="col-md-4">
                                         <img src="
                                         <?php // выводим картинку
-                                           echo "img/".$imageUser;
+                                           echo "/"."img/".$userDate['image'];
                                         ?>
                                         " alt="" class="img-fluid">
                                     </div>
@@ -171,7 +146,7 @@
                              unset( $_SESSION['update']);                             
                             }
                             ?>
-                            <form action="handling_profile.php" method="post">
+                            <form action="/mvc/controlers/handling_profile.php" method="post">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">

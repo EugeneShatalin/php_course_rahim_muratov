@@ -5,4 +5,6 @@
   setcookie("passUserСookie", "", time());
   //Удаляем данные из сессии
   session_destroy();
-  header("Location: index.php");
+  $redirect = isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER']:'redirect-form.html';
+  header("Location: $redirect");
+  exit();

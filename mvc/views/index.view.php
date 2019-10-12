@@ -1,47 +1,3 @@
-<?php
-//Запуск сессии
-    session_start();
-    //передаем в переменную ID пользователя для формирования запроса на получения данных из двух таблиц
-    $idUser = $_SESSION['idUser'];
-//Подключение к БД        
-    $driver = 'mysql'; // тип базы данных, с которой мы будем работать 
-    $host = 'localhost';// альтернатива '127.0.0.1' - адрес хоста, в нашем случае локального    
-    $db_name = 'rahim_project'; // имя базы данных     
-    $db_user = 'root'; // имя пользователя для базы данных     
-    $db_password = ''; // пароль пользователя     
-    $charset = 'utf8'; // кодировка по умолчанию     
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]; // массив с дополнительными настройками подключения
-    //создание переменной хранящей параметры БД
-    $dsn = "$driver:host=$host;dbname=$db_name;charset=$charset";
-    //создание обьекта PDO
-    $pdo = new PDO($dsn, $db_user, $db_password, $options);
-    //sql запрос к БД
-    //формируем запрос к двум таблицам
-    $sql = "SELECT users.name_user, users.id, comments.comment, comments.date, comments.do_not_show_comment FROM users LEFT JOIN comments  ON users.id=comments.id_user ORDER BY date DESC";
-    
-    //запрос к БД
-    $result = $pdo->query($sql);
-    
-    //Преобразуем то, что отдала нам база в нормальный массив PHP $comments:
-    for ($comments = []; $row = $result->fetch(PDO::FETCH_ASSOC); $comments[] = $row);
-    
-        //Блок проверки авторизации
-    if (!isset($_SESSION['emailUser'])) { //проверка куки если нет сессии
-        if (isset($_COOKIE['emailUserСookie']) && isset($_COOKIE['passUserСookie'])){ //проверка данных в базе при наличии куки
-            $emailCookie = $_COOKIE['emailUserСookie']; 
-            $passCookie = $_COOKIE['passUserСookie'];
-            $sql_2 = "SELECT email, name_user, password FROM users WHERE id>0 AND email='$emailCookie' AND password='$passCookie'";
-            $result_2 = $pdo->query($sql_2);
-            //Если запрос вернул результат, запускаем ссесию    
-                if(!empty($result_2)) {
-                $_SESSION['emailUser'] = $emailCookie;
-                for ($emailAndPass = []; $row = $result_2->fetchAll(PDO::FETCH_UNIQUE); $emailAndPass[] = $row);
-                $_SESSION['nameUser'] = $emailAndPass[0][$emailCookie]['name_user'];
-            }
-        }
-
-    }    
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,13 +11,13 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="/index.php">
                     Project
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +27,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav ml-auto" <?php //убираем данный элемент со страницы если не авторизован пользователь
-                                    if(empty($idUser)) {
+                                    if(empty($_SESSION['idUser'])) {
                                         echo 'style="display: none;"';
                                     }
                                     ?>>
@@ -80,8 +36,9 @@
                         echo $_SESSION['nameUser'];
                     }
                     ?>
-                    <li><a href="profile.php">Профиль   </a></li>
-                    <li><a href="end.php">Выход </a></li>
+                    <li><a href="/profile">Профиль   </a></li>
+                    <li><a href="/mvc/controlers/end.php">Выход </a></li>
+                    <li><a href="/admin">Админка </a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -94,10 +51,10 @@
                     >
                         <!-- Authentication Links -->
                             <li class="nav-item">
-                                <a class="nav-link" href="login.php">Login</a>
+                                <a class="nav-link" href="/login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="register.php">Register</a>
+                                <a class="nav-link" href="/register">Register</a>
                             </li>
                     </ul>
                 </div>
@@ -123,21 +80,19 @@
                               
 
                     //Вывод комментариев циклом foreach         
-                    foreach ($comments as $comment ) {
+                    foreach ($row as $comment ) {
                         // Проверяем что комментарий существует для данного пользователя, так как данные берем из двух таблиц, чтоб не вывести пустой комментарий
                         if(!empty($comment['comment']) && $comment['do_not_show_comment'] == false) {?>						
                                 <div class="media">
                                 <img src="
                                 <?php // выводим картинку
                                     $id = $comment['id'];
-                                    $sql_3 = "SELECT image FROM users WHERE id=$id";
-                                    $result = $pdo->query($sql_3);
-                                    for ($img = []; $row = $result->fetch(PDO::FETCH_COLUMN); $img[] = $row);
-                                   if(!empty($img)) { // если картинка существует выведим ее
-                                       echo 'img/'.$img[0];
+                                    
+                                   if($comment['image'] != NULL) { // если картинка существует выведим ее
+                                       echo '/'.'img/'.$comment['image'];
                                    }
                                    else {
-                                    echo 'img/no-user.jpg'; // если не существует, выведим заглушку
+                                    echo '/'.'img/no-user.jpg'; // если не существует, выведим заглушку
                                    }
                                     
                                 ?>
@@ -165,7 +120,7 @@
                     </div>
                 
                     <div class="col-md-12" style="margin-top: 20px; <?php
-                                                                        if(empty($idUser)) {
+                                                                        if(empty($_SESSION['idUser'])) {
                                                                             echo 'display: none;';
                                                                         }
                                                                     ?> ">
@@ -173,7 +128,7 @@
                             <div class="card-header" display = "none"><h3>Оставить комментарий</h3></div>
 
                             <div class="card-body">
-                                <form action="store.php" method="post">
+                                <form action="/mvc/controers/store.php" method="post">
                                     <div class="form-group" 
                                     <?php //убираем данный элемент со страницы если авторизован пользователь
                                     if($_SESSION['idUser']) {

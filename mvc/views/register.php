@@ -14,13 +14,13 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="css/app.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="index.php">
+                <a class="navbar-brand" href="/">
                     Project
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,18 +29,35 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
-
+                    <ul class="navbar-nav ml-auto" <?php //убираем данный элемент со страницы если не авторизован пользователь
+                                    if(empty($_SESSION['idUser'])) {
+                                        echo 'style="display: none;"';
+                                    }
+                                    ?>>
+                    <?php 
+                    if($_SESSION['nameUser']) {
+                        echo $_SESSION['nameUser'];
+                    }
+                    ?>
+                    <li><a href="/profile">Профиль   </a></li>
+                    <li><a href="/mvc/controlers/end.php">Выход </a></li>
+                    <li><a href="/admin">Админка </a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto" 
+                    <?php //убираем данный элемент со страницы если авторизован пользователь
+                                    if($_SESSION['idUser']) {
+                                        echo 'style="display: none;"';
+                                    }
+                                    ?>
+                    >
                         <!-- Authentication Links -->
                             <li class="nav-item">
-                                <a class="nav-link" href="login.php">Login</a>
+                                <a class="nav-link" href="/login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="register.php">Register</a>
+                                <a class="nav-link" href="/register">Register</a>
                             </li>
                     </ul>
                 </div>
@@ -55,7 +72,7 @@
                             <div class="card-header">Register</div>
 
                             <div class="card-body">
-                                <form method="POST" action="handling_register.php">
+                                <form method="POST" action="/mvc/controlers/handling_register.php">
 
                                     <div class="form-group row">
                                         <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
